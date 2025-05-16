@@ -1,0 +1,31 @@
+---
+ssl_certbot_cloudflare_container_name: certbot
+
+ssl_certbot_cloudflare_container_ports: []
+  # - "443:3000"
+  # - "127.0.0.1:2222:22"
+
+ssl_certbot_cloudflare_main_storage: "{{ podman_pod_storage }}/{{ ssl_certbot_cloudflare_container_name }}/_data"
+
+ssl_certbot_cloudflare_container_spec:
+  - name: "{{ ssl_certbot_cloudflare_container_name }}"
+    image_url: "docker.io/certbot/dns-cloudflare"
+    image_version: "{{ ssl_certbot_cloudflare_image_version }}"
+    timer: 'monthly'
+    volumes:
+      - name: "{{ ssl_certbot_cloudflare_container_name }}"
+        target: /etc/letsencrypt/renewal
+      - name: certbot_certs
+        target: /etc/letsencrypt/live
+      - src: /etc/timezone
+        target: /etc/timezone:ro
+      - src: /etc/localtime
+        target: /etc/localtime:ro
+    args:
+      - certonly
+      - --config="/etc/letsencrypt/renewal/certbot.ini"
+      - --dns-cloudflare
+      - --noninteractive
+      - -d
+      - "{{ inventory_hostname }}"
+

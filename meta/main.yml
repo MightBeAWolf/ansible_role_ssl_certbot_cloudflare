@@ -1,0 +1,19 @@
+galaxy_info:
+  author: your name
+  description: your role description
+
+  license: MIT
+
+  min_ansible_version: 2.1
+
+  galaxy_tags:
+    - ssl
+    - cert
+    - certbot
+    - container
+    - podman
+
+dependencies:
+  - role: podman_pod
+    vars:
+      podman_pod_name: "{{ ssl_certbot_cloudflare_container_name }}_pod"

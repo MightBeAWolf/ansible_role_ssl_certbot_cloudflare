@@ -1,0 +1,39 @@
+---
+- name: Check if the Cloudflare credentials are set and not empty
+  ansible.builtin.assert:
+    that:
+      - lookup('env', 'DNS_CLOUDFLARE_API_TOKEN')
+    fail_msg: "The Cloudflare API Secrets were not found!"
+
+- name: Certbot Config
+  ansible.builtin.template:
+    src: certbot.ini.j2
+    dest: "{{ ssl_certbot_cloudflare_main_storage }}/certbot.ini"
+    owner: "{{ container_user.name }}"
+    group: "{{ container_user.group }}"
+    mode: '0600'
+  become: true
+  register: ssl_certbot_cloudflare_config
+
+- name: Cloudflare Credentials Config
+  ansible.builtin.template:
+    src: cloudflare-credentials.ini.j2
+    dest: "{{ ssl_certbot_cloudflare_main_storage }}/cloudflare-credentials.ini"
+    owner: "{{ container_user.name }}"
+    group: "{{ container_user.group }}"
+    mode: '0600'
+  become: true
+  register: ssl_certbot_cloudflare_creds
+
+- name: Get new Certs
+  ansible.builtin.systemd:
+    name: "{{ ssl_certbot_cloudflare_container_name }}_podman.service"
+    state: started
+  become: true
+  when: (
+    ssl_certbot_cloudflare_config.changed or
+    ssl_certbot_cloudflare_creds.changed
+   )
+
+
+

@@ -1,0 +1,16 @@
+# These options apply to all use of Certbot for obtaining or renewing
+# certificates, so options specific to a single certificate on a system with
+# several certificates should not be placed here.
+
+# Use ECC for the private key
+key-type = ecdsa
+elliptic-curve = secp384r1
+
+# Use a 4096 bit RSA key instead of 2048
+rsa-key-size = 4096
+
+# Cloudflare configuration
+dns-cloudflare-credentials = /etc/letsencrypt/renewal/cloudflare-credentials.ini
+
+# automatically agree to the terms of service of the ACME server
+agree-tos = true
