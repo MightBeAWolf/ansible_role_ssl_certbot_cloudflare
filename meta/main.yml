@@ -12,8 +12,3 @@ galaxy_info:
     - certbot
     - container
     - podman
-
-dependencies:
-  - role: podman_pod
-    vars:
-      podman_pod_name: "{{ ssl_certbot_cloudflare_container_name }}_pod"

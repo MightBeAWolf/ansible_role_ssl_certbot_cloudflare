@@ -1,4 +1,10 @@
 ---
+- name: Include the example role
+  include_role:
+    name: podman_pod
+  vars:
+    podman_pod_name: "{{ ssl_certbot_cloudflare_container_name }}_pod"
+
 - name: Check if the Cloudflare credentials are set and not empty
   ansible.builtin.assert:
     that:

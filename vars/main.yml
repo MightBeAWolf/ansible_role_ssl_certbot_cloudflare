@@ -5,7 +5,7 @@ ssl_certbot_cloudflare_container_ports: []
   # - "443:3000"
   # - "127.0.0.1:2222:22"
 
-ssl_certbot_cloudflare_main_storage: "{{ podman_pod_storage }}/{{ ssl_certbot_cloudflare_container_name }}/_data"
+ssl_certbot_cloudflare_main_storage: "/var/lib/containers/storage/volumes/{{ ssl_certbot_cloudflare_container_name }}/_data"
 
 ssl_certbot_cloudflare_container_spec:
   - name: "{{ ssl_certbot_cloudflare_container_name }}"
