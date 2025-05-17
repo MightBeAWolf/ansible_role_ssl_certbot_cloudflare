@@ -14,3 +14,8 @@ dns-cloudflare-credentials = /etc/letsencrypt/renewal/cloudflare-credentials.ini
 
 # automatically agree to the terms of service of the ACME server
 agree-tos = true
+
+# If a certificate already exists for the requested domains, renew it now,
+# regardless of whether it is near expiry. (Often --keep-until-expiring is more
+# appropriate). Also implies --expand. (default: False)
+force-renewal = true

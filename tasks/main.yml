@@ -1,4 +1,10 @@
 ---
+- name: Check if the Cloudflare credentials are set and not empty
+  ansible.builtin.assert:
+    that:
+      - lookup('env', 'DNS_CLOUDFLARE_API_TOKEN')
+    fail_msg: "The Cloudflare API Secrets were not found!"
+
 - name: Include the podman pod role to setup the container(s)
   include_role:
     name: podman_pod
@@ -9,17 +15,28 @@
       ports:      "{{ ssl_certbot_cloudflare_container_ports }}"
       containers: "{{ ssl_certbot_cloudflare_container_spec }}"
 
+- name: Certbot Renewal Hooks
+  ansible.builtin.copy:
+    src: "renewal-hooks"
+    dest: "{{ ssl_certbot_cloudflare_main_storage }}"
+    owner: "{{ container_user.name }}"
+    group: "{{ container_user.group }}"
+    mode: '0700'
+  become: true
 
-- name: Check if the Cloudflare credentials are set and not empty
-  ansible.builtin.assert:
-    that:
-      - lookup('env', 'DNS_CLOUDFLARE_API_TOKEN')
-    fail_msg: "The Cloudflare API Secrets were not found!"
+- name: Certbot Renewal Directory
+  ansible.builtin.file:
+    path: "{{ ssl_certbot_cloudflare_main_storage }}/renewal"
+    state: directory
+    owner: "{{ container_user.name }}"
+    group: "{{ container_user.group }}"
+    mode: '0700'
+  become: true
 
 - name: Certbot Config
   ansible.builtin.template:
     src: certbot.ini.j2
-    dest: "{{ ssl_certbot_cloudflare_main_storage }}/certbot.ini"
+    dest: "{{ ssl_certbot_cloudflare_main_storage }}/renewal/certbot.ini"
     owner: "{{ container_user.name }}"
     group: "{{ container_user.group }}"
     mode: '0600'
@@ -29,7 +46,7 @@
 - name: Cloudflare Credentials Config
   ansible.builtin.template:
     src: cloudflare-credentials.ini.j2
-    dest: "{{ ssl_certbot_cloudflare_main_storage }}/cloudflare-credentials.ini"
+    dest: "{{ ssl_certbot_cloudflare_main_storage }}/renewal/cloudflare-credentials.ini"
     owner: "{{ container_user.name }}"
     group: "{{ container_user.group }}"
     mode: '0600'
@@ -45,6 +62,3 @@
     ssl_certbot_cloudflare_config.changed or
     ssl_certbot_cloudflare_creds.changed
    )
-
-
-
