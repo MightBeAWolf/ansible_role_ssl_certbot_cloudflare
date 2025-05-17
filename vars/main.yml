@@ -13,7 +13,7 @@ ssl_certbot_cloudflare_container_spec:
     image_version: "{{ ssl_certbot_cloudflare_image_version }}"
     timer: 'monthly'
     volumes:
-      - name: "{{ ssl_certbot_letsencrypt_named_volume | default(ssl_certbot_cloudflare_container_name) }}"
+      - name: "{{ ssl_certbot_cloudflare_container_name }}"
         target: /etc/letsencrypt
       - src: /etc/timezone
         target: /etc/timezone:ro
