@@ -25,5 +25,14 @@ ssl_certbot_cloudflare_container_spec:
       - --dns-cloudflare
       - --noninteractive
       - -d
-      - "{{ inventory_hostname }}"
+      - >-
+        {{
+          (
+            [ inventory_hostname ]
+            +
+            (ssl_certbot_cloudflare_additional_domains | default([]))
+          )
+          | join(',')
+        }}
+
 
